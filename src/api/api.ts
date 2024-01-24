@@ -9,6 +9,7 @@ export const getTasks = async () => {
         return { data, status }
     } catch (e) {
         console.log({ error: e })
+        return { error: e }
     }
 }
 

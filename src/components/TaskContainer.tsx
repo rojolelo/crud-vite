@@ -1,3 +1,4 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import Task from "./Task";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,7 +15,25 @@ import TaskAdd from "./TaskAdd";
 const TaskContainer: React.FC = (): ReactElement => {
   const [tasks, setTasks] = useState<ITask[]>([]);
 
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+
   useEffect(() => {
+    const getTasksAuth = async () => {
+      console.log("gettaskauth");
+      try {
+        const accessToken = await getAccessTokenSilently({
+          authorizationParams: {
+            audience: `https://dev-sdj0osds.auth0.com/api/v2`,
+            scope: "read:current_user",
+          },
+        });
+
+        console.log(accessToken);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getTasksAuth();
     handleGetTasks();
   }, []);
 
@@ -50,29 +69,33 @@ const TaskContainer: React.FC = (): ReactElement => {
 
   return (
     <TableContainer component={Paper}>
-      <TaskAdd addTask={addTask} />
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Task Name</TableCell>
-            <TableCell align="right">Status</TableCell>
-            <TableCell align="right">Edit</TableCell>
-            <TableCell align="right">Delete</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {tasks.map((task: ITask) => {
-            return (
-              <Task
-                task={task}
-                updateOne={updateOne}
-                deleteOne={deleteOne}
-                key={task._id}
-              />
-            );
-          })}
-        </TableBody>
-      </Table>
+      {isAuthenticated ? (
+        <>
+          <TaskAdd addTask={addTask} />
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Task Name</TableCell>
+                <TableCell align="right">Status</TableCell>
+                <TableCell align="right">Edit</TableCell>
+                <TableCell align="right">Delete</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tasks.map((task: ITask) => {
+                return (
+                  <Task
+                    task={task}
+                    updateOne={updateOne}
+                    deleteOne={deleteOne}
+                    key={task._id}
+                  />
+                );
+              })}
+            </TableBody>
+          </Table>
+        </>
+      ) : null}
     </TableContainer>
   );
 };
