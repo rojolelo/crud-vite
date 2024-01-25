@@ -8,21 +8,27 @@ const TaskAdd = ({ addTask }: { addTask: Function }): ReactElement => {
   const [uploading, setUploading] = useState(false);
 
   const handleSave = async () => {
+    //Disable edit and buttons
     setUploading(true);
+
+    //Upload to the DB
     let res = await uploadTask({ name, checked });
+
     if (res?.status === 200) {
+      // Add to the [tasks] states in <TaskContainer> using addTask()
       const newTaskId = res.data.insertedId;
       addTask({ _id: newTaskId, name, checked });
+
+      //Clean and enable fields
       setUploading(false);
       setName("");
       setChecked(false);
     }
   };
 
-  //TODO - Update or force new getTasks
-
   return (
     <>
+      <h3>Add New Task</h3>
       <TextField
         id="standard-basic"
         label="Standard"

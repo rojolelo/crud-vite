@@ -12,28 +12,12 @@ import { getTasks } from "../api/api";
 import { ITask } from "../models/Task";
 import TaskAdd from "./TaskAdd";
 
-const TaskContainer: React.FC = (): ReactElement => {
+const TaskContainer = (): ReactElement => {
   const [tasks, setTasks] = useState<ITask[]>([]);
 
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated } = useAuth0();
 
   useEffect(() => {
-    const getTasksAuth = async () => {
-      console.log("gettaskauth");
-      try {
-        const accessToken = await getAccessTokenSilently({
-          authorizationParams: {
-            audience: `https://dev-sdj0osds.auth0.com/api/v2`,
-            scope: "read:current_user",
-          },
-        });
-
-        console.log(accessToken);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    getTasksAuth();
     handleGetTasks();
   }, []);
 
@@ -44,7 +28,7 @@ const TaskContainer: React.FC = (): ReactElement => {
     return res;
   };
 
-  //Update ONE of the tasks in the [task] state once it has been updated in the DB, so it doesn't make another call.
+  //Update ONE of the tasks in the [tasks] state once it has been updated in the DB
   const updateOne = (updatedTask: ITask) => {
     const newTaskList = tasks.map((task) => {
       if (task._id != updatedTask._id) {
@@ -56,12 +40,13 @@ const TaskContainer: React.FC = (): ReactElement => {
     setTasks(newTaskList);
   };
 
-  //Delete ONE of the tasks in the [task] state once it has been deleted from the DB, so it doesn't make another call.
+  //Delete ONE of the tasks in the [tasks] state once it has been deleted from the DB
   const deleteOne = (_id: string) => {
     const newTaskList = tasks.filter((task) => task._id != _id);
     setTasks(newTaskList);
   };
 
+  //Add ONE task to [tasks] state once it has been added to the DB
   const addTask = (newTask: ITask) => {
     const newTaskList = [...tasks, newTask];
     setTasks(newTaskList);

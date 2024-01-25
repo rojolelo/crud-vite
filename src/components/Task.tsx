@@ -21,6 +21,7 @@ const Task = ({
   const [newName, setNewName] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  // Save button when editing
   const handleSave = async () => {
     setUploading(true);
     let res;
@@ -39,7 +40,11 @@ const Task = ({
     setNewName("");
     setEditToggle(false);
   };
+
+  // Show Edit field
   const handleEdit = (): void => setEditToggle(true);
+
+  // Delete task
   const handleDelete = async () => {
     setUploading(true);
     let res = await deleteTask(task);
@@ -48,8 +53,11 @@ const Task = ({
       deleteOne(task._id);
     }
   };
+
+  // Show Delete Buttons (Cancel & Delete)
   const handleDeleteToggle = (bool: boolean) => setDeleteConfirmation(bool);
 
+  // Checks the status
   const handleCheck = async () => {
     setUploading(true);
     const res = await updateTask({ ...task, checked: !task.checked });
@@ -60,9 +68,7 @@ const Task = ({
   };
 
   return (
-    <TableRow
-    //sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-    >
+    <TableRow>
       <TableCell component="th" scope="row">
         {editToggle ? (
           <TextField
@@ -78,7 +84,7 @@ const Task = ({
           <span>{task.name}</span>
         )}
       </TableCell>
-      {/* Done / Not-Done */}
+      {/* Done / Not-Done Icon*/}
       <TableCell align="right">
         {task.checked ? (
           <CheckCircleOutlineIcon
