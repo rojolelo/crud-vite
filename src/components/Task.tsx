@@ -70,6 +70,8 @@ const Task = ({
             label="Standard"
             variant="standard"
             disabled={uploading}
+            inputProps={{ maxLength: 20 }}
+            defaultValue={task.name}
             onChange={(e) => setNewName(e.currentTarget.value)}
           />
         ) : (
@@ -79,9 +81,15 @@ const Task = ({
       {/* Done / Not-Done */}
       <TableCell align="right">
         {task.checked ? (
-          <CheckCircleOutlineIcon onClick={handleCheck} />
+          <CheckCircleOutlineIcon
+            onClick={handleCheck}
+            sx={{ cursor: "pointer" }}
+          />
         ) : (
-          <RadioButtonUncheckedIcon onClick={handleCheck} />
+          <RadioButtonUncheckedIcon
+            onClick={handleCheck}
+            sx={{ cursor: "pointer" }}
+          />
         )}
       </TableCell>
       {/* Save */}
@@ -104,13 +112,16 @@ const Task = ({
             </Button>
           </>
         ) : (
-          <EditOutlined onClick={handleEdit} />
+          <EditOutlined onClick={handleEdit} sx={{ cursor: "pointer" }} />
         )}
       </TableCell>
       {/* Delete */}
       <TableCell align="right">
         {deleteConfirmation ? null : (
-          <DeleteOutlineIcon onClick={() => handleDeleteToggle(true)} />
+          <DeleteOutlineIcon
+            onClick={() => handleDeleteToggle(true)}
+            sx={{ cursor: "pointer" }}
+          />
         )}
         {deleteConfirmation ? (
           <>

@@ -28,6 +28,7 @@ const TaskAdd = ({ addTask }: { addTask: Function }): ReactElement => {
         label="Standard"
         variant="standard"
         disabled={uploading}
+        inputProps={{ maxLength: 20 }}
         value={name}
         onChange={(e) => setName(e.currentTarget.value)}
       />
