@@ -1,8 +1,8 @@
 import { Button, Checkbox, TextField } from "@mui/material";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import { uploadTask } from "../api/api";
 
-const TaskAdd = ({ addTask }: { addTask: Function }) => {
+const TaskAdd = ({ addTask }: { addTask: Function }): ReactElement => {
   const [name, setName] = useState("");
   const [checked, setChecked] = useState(false);
   const [uploading, setUploading] = useState(false);

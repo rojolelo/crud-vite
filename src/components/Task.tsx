@@ -4,7 +4,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import { ITask } from "../models/Task";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import { deleteTask, updateTask } from "../api/api";
 
 const Task = ({
@@ -15,7 +15,7 @@ const Task = ({
   task: ITask;
   updateOne: Function;
   deleteOne: Function;
-}) => {
+}): ReactElement => {
   const [editToggle, setEditToggle] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [newName, setNewName] = useState("");
