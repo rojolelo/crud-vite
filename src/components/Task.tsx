@@ -73,7 +73,7 @@ const Task = ({
         {editToggle ? (
           <TextField
             id="standard-basic"
-            label="Standard"
+            label="New Task Name"
             variant="standard"
             disabled={uploading}
             inputProps={{ maxLength: 20 }}

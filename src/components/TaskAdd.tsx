@@ -31,7 +31,7 @@ const TaskAdd = ({ addTask }: { addTask: Function }): ReactElement => {
       <h3>Add New Task</h3>
       <TextField
         id="standard-basic"
-        label="Standard"
+        label="Task Name"
         variant="standard"
         disabled={uploading}
         inputProps={{ maxLength: 20 }}

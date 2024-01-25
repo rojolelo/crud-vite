@@ -67,7 +67,7 @@ const TaskContainer = (): ReactElement => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {tasks.map((task: ITask) => {
+              {tasks?.map((task: ITask) => {
                 return (
                   <Task
                     task={task}
