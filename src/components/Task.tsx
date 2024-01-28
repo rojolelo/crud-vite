@@ -6,28 +6,40 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import { ITask } from "../models/Task";
 import { ReactElement, useState } from "react";
 import { deleteTask, updateTask } from "../api/api";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Task = ({
   task,
   updateOne,
   deleteOne,
+  newError,
 }: {
   task: ITask;
   updateOne: Function;
   deleteOne: Function;
+  newError: Function;
 }): ReactElement => {
   const [editToggle, setEditToggle] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [newName, setNewName] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  const { getAccessTokenSilently } = useAuth0();
+
   // Save button when editing
   const handleSave = async () => {
+    const token = await getAccessTokenSilently();
+
     setUploading(true);
-    let res;
+    let res: any;
     if (newName.length > 0 && newName != task.name) {
-      res = await updateTask({ ...task, name: newName });
+      res = await updateTask({ ...task, name: newName }, token);
+    } else {
+      setUploading(false);
+      setEditToggle(false);
+      return null;
     }
+
     if (res?.status === 200) {
       let taskToUpdate = {
         _id: task._id,
@@ -35,6 +47,8 @@ const Task = ({
         checked: task.checked,
       };
       updateOne(taskToUpdate);
+    } else {
+      newError(res);
     }
     setUploading(false);
     setNewName("");
@@ -46,11 +60,15 @@ const Task = ({
 
   // Delete task
   const handleDelete = async () => {
+    const token = await getAccessTokenSilently();
     setUploading(true);
-    let res = await deleteTask(task);
+    let res: any = await deleteTask(task, token);
     if (res?.status == 200) {
       setUploading(false);
       deleteOne(task._id);
+    } else {
+      setDeleteConfirmation(false);
+      newError(res);
     }
   };
 
@@ -59,11 +77,17 @@ const Task = ({
 
   // Checks the status
   const handleCheck = async () => {
+    const token = await getAccessTokenSilently();
     setUploading(true);
-    const res = await updateTask({ ...task, checked: !task.checked });
+    const res: any = await updateTask(
+      { ...task, checked: !task.checked },
+      token
+    );
     if (res?.status == 200) {
       updateOne({ ...task, checked: !task.checked });
       setUploading(false);
+    } else {
+      newError(res);
     }
   };
 

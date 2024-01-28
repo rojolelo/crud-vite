@@ -1,28 +1,44 @@
 import { Button, Checkbox, TextField } from "@mui/material";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { uploadTask } from "../api/api";
+import { useAuth0 } from "@auth0/auth0-react";
 
-const TaskAdd = ({ addTask }: { addTask: Function }): ReactElement => {
+const TaskAdd = ({
+  addTask,
+  newError,
+}: {
+  addTask: Function;
+  newError: Function;
+}): ReactElement => {
   const [name, setName] = useState("");
   const [checked, setChecked] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const { getAccessTokenSilently } = useAuth0();
+
   const handleSave = async () => {
+    const token: string = await getAccessTokenSilently();
     //Disable edit and buttons
     setUploading(true);
 
     //Upload to the DB
-    let res = await uploadTask({ name, checked });
+    let res: any = await uploadTask({ name, checked }, token);
 
     if (res?.status === 200) {
       // Add to the [tasks] states in <TaskContainer> using addTask()
       const newTaskId = res.data.insertedId;
-      addTask({ _id: newTaskId, name, checked });
+      addTask({
+        _id: newTaskId,
+        name,
+        checked,
+      });
 
       //Clean and enable fields
       setUploading(false);
       setName("");
       setChecked(false);
+    } else {
+      newError(res);
     }
   };
 

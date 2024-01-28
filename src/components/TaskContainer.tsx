@@ -10,21 +10,35 @@ import Paper from "@mui/material/Paper";
 import { ReactElement, useEffect, useState } from "react";
 import { getTasks } from "../api/api";
 import { ITask } from "../models/Task";
+import { IError } from "../models/Error";
 import TaskAdd from "./TaskAdd";
+import { Alert } from "@mui/material";
 
 const TaskContainer = (): ReactElement => {
   const [tasks, setTasks] = useState<ITask[]>([]);
+  const [error, setError] = useState<IError>({ error: false, msg: "" });
 
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    handleGetTasks();
-  }, []);
+    if (isAuthenticated) {
+      handleGetTasks();
+    }
+  }, [isAuthenticated]);
 
   //Get tasks from Database
   const handleGetTasks = async () => {
-    const res = await getTasks();
-    setTasks(res?.data); // {data: {}, status: number}
+    let token = "";
+    if (isAuthenticated) {
+      token = await getAccessTokenSilently();
+    }
+    const res = await getTasks(token);
+
+    if (res.status != 200) {
+      setError({ error: res.error!, msg: res.msg });
+    } else {
+      setTasks(res?.data);
+    }
     return res;
   };
 
@@ -52,11 +66,16 @@ const TaskContainer = (): ReactElement => {
     setTasks(newTaskList);
   };
 
+  const newError = (e: IError) => {
+    setError({ error: e.error, msg: e.msg });
+  };
+
   return (
     <TableContainer component={Paper}>
       {isAuthenticated ? (
         <>
-          <TaskAdd addTask={addTask} />
+          {error?.error && <Alert severity="error">{error.msg}</Alert>}
+          <TaskAdd addTask={addTask} newError={newError} />
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -73,6 +92,7 @@ const TaskContainer = (): ReactElement => {
                     task={task}
                     updateOne={updateOne}
                     deleteOne={deleteOne}
+                    newError={newError}
                     key={task._id}
                   />
                 );
